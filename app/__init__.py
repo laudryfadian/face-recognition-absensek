@@ -4,6 +4,8 @@ from app.views.company_view import company_bp
 from app.views.auth_view import auth_bp
 from app.views.setting_view import setting_bp
 from app.views.config_view import config_bp
+from app.views.category_view import category_bp
+from app.views.absen_view import absen_bp
 from config import Config
 from app.database import initialize_db
 from flask_cors import CORS
@@ -20,6 +22,8 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(setting_bp)
     app.register_blueprint(config_bp)
+    app.register_blueprint(category_bp)
+    app.register_blueprint(absen_bp)
     
     @app.errorhandler(Exception)
     def handle_error(e):
