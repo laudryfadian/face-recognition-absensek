@@ -1,7 +1,6 @@
 from flask import request
 from app.models.user_model import User
 from app.models.company_model import Company
-from app.models.setting_model import Setting
 from app.utils import *
 
 def get_users():
@@ -30,10 +29,8 @@ def create_user():
         return error_response("email sudah ada")
     
     user = User.create(name, email, password, phone, job, superUser, salary, jobType, idCompany, isAbsen)
-    
-    setting = Setting.create(user['id'], user['idCompany'], 2, "0800", "1600", "0000", "0000")
-    if not setting:
-        return error_response("gagal membuat setting akun")
+    if not user:
+        return error_response("gagal membuat akun")
     
     return success_response(user)
 
@@ -70,9 +67,15 @@ def delete_user(user_id):
         return error_response("User not found")
     
 def get_user_by_id_company(company_id):
+    # user = User.get_by_id_company(company_id)
+    # print(user)
+    # if user:
+    #     return success_response(user)
+    # else:
+    #     return error_response("User tidak ada")
     user = User.get_by_id_company(company_id)
-    print(user)
     if user:
-        return success_response(user)
-    else:
-        return error_response("User tidak ada")
+        for i in range(len(user)):
+            company = Company.get_by_id(user[i]['idCompany'])
+            user[i]['idCompany'] = company
+    return success_response(user)
