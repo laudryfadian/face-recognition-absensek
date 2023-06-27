@@ -14,6 +14,7 @@ class User(db.Document):
     isAbsen = db.BooleanField(required=True)
     jobType = db.StringField(required=True)
     idCompany = db.ObjectIdField(required=True, default=lambda: ObjectId())
+    idCategory = db.ObjectIdField(default=lambda: ObjectId())
     created_at = db.DateTimeField(default=datetime.now)
     
     def to_dict(self):
@@ -28,7 +29,8 @@ class User(db.Document):
             'salary': self.salary,
             'isAbsen': self.isAbsen,
             'jobType': self.jobType,
-            'idCompany': str(self.idCompany)
+            'idCompany': str(self.idCompany),
+            'idCategory': str(self.idCategory) if str(self.idCategory) else None
         }
 
     @staticmethod
@@ -37,13 +39,13 @@ class User(db.Document):
         return [user.to_dict() for user in users]
 
     @staticmethod
-    def create(name, email, password, phone, job, superUser, salary, jobType, idCompany, isAbsen):
-        user = User(name=name, email=email, password=password, phone=phone, job=job, superUser=superUser, salary=salary, jobType=jobType, idCompany=idCompany, isAbsen=isAbsen)
+    def create(name, email, password, phone, job, superUser, salary, jobType, idCompany, isAbsen, idCategory=None):
+        user = User(name=name, email=email, password=password, phone=phone, job=job, superUser=superUser, salary=salary, jobType=jobType, idCompany=idCompany, isAbsen=isAbsen, idCategory=idCategory)
         user.save()
         return user.to_dict()
 
     @staticmethod
-    def update(user_id, name=None, email=None, password=None, phone=None, job=None, superUser=None, salary=None, jobType=None, idCompany=None, isAbsen=None):
+    def update(user_id, name=None, email=None, password=None, phone=None, job=None, superUser=None, salary=None, jobType=None, idCompany=None, isAbsen=None, idCategory=None):
         user = User.objects(id=user_id).first()
         if not user:
             return None
@@ -65,6 +67,8 @@ class User(db.Document):
             user.jobType = jobType
         if idCompany:
             user.idCompany = idCompany
+        if idCategory:
+            user.idCategory = idCategory
         user.isAbsen = isAbsen
         user.save()
         return user.to_dict()
@@ -97,6 +101,14 @@ class User(db.Document):
     def get_by_id_company(idCompany):
         try:
             users = User.objects.filter(idCompany=ObjectId(idCompany))
+            return [user.to_dict() for user in users]
+        except User.DoesNotExist:
+            return None
+    
+    @staticmethod
+    def get_by_id_category(idCategory):
+        try:
+            users = User.objects.filter(idCategory=ObjectId(idCategory))
             return [user.to_dict() for user in users]
         except User.DoesNotExist:
             return None
