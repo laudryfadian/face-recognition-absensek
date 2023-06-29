@@ -13,6 +13,8 @@ class User(db.Document):
     salary = db.IntField(required=True)
     isAbsen = db.BooleanField(required=True)
     jobType = db.StringField(required=True)
+    image = db.StringField(required=True)
+    verify = db.BooleanField(default=False, required=True)
     idCompany = db.ObjectIdField(required=True, default=lambda: ObjectId())
     idCategory = db.ObjectIdField(default=lambda: ObjectId())
     created_at = db.DateTimeField(default=datetime.now)
@@ -29,6 +31,8 @@ class User(db.Document):
             'salary': self.salary,
             'isAbsen': self.isAbsen,
             'jobType': self.jobType,
+            'image': self.image,
+            'verify': self.verify,
             'idCompany': str(self.idCompany),
             'idCategory': str(self.idCategory) if str(self.idCategory) else None
         }
@@ -39,13 +43,13 @@ class User(db.Document):
         return [user.to_dict() for user in users]
 
     @staticmethod
-    def create(name, email, password, phone, job, superUser, salary, jobType, idCompany, isAbsen, idCategory=None):
-        user = User(name=name, email=email, password=password, phone=phone, job=job, superUser=superUser, salary=salary, jobType=jobType, idCompany=idCompany, isAbsen=isAbsen, idCategory=idCategory)
+    def create(name, email, password, phone, job, superUser, salary, jobType, image, verify, idCompany, isAbsen, idCategory=None):
+        user = User(name=name, email=email, password=password, phone=phone, job=job, superUser=superUser, salary=salary, jobType=jobType, image=image, verify=verify, idCompany=idCompany, isAbsen=isAbsen, idCategory=idCategory)
         user.save()
         return user.to_dict()
 
     @staticmethod
-    def update(user_id, name=None, email=None, password=None, phone=None, job=None, superUser=None, salary=None, jobType=None, idCompany=None, isAbsen=None, idCategory=None):
+    def update(user_id, name=None, email=None, password=None, phone=None, job=None, superUser=None, salary=None, jobType=None, image=None, verify=None, idCompany=None, isAbsen=None, idCategory=None):
         user = User.objects(id=user_id).first()
         if not user:
             return None
@@ -65,6 +69,10 @@ class User(db.Document):
             user.salary = salary
         if jobType:
             user.jobType = jobType
+        if image:
+            user.image = image
+        if verify:
+            user.verify = verify
         if idCompany:
             user.idCompany = idCompany
         if idCategory:

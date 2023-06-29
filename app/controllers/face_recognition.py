@@ -1,9 +1,31 @@
+import requests
+import os
 from deepface import DeepFace
 from app.utils import *
 
+def download_image_from_url(url, save_path):
+    response = requests.get(url)
+    with open(save_path, 'wb') as f:
+        f.write(response.content)
+        
 def face_recog_deepface(image1, image2, model):
-  recog = DeepFace.verify(img1_path=image1, img2_path=image2, model_name=model)
-  if recog['distance'] > 0.36:
-    return False #gagal face recognition
+  # Menentukan path tempat penyimpanan sementara
+  image_temp_dir = "image_temp"
+  os.makedirs(image_temp_dir, exist_ok=True)
   
-  return True #berhasil face recognition
+  # Mengunduh gambar dari URL dan menyimpannya di folder image_temp
+  image1_path = os.path.join(image_temp_dir, "image1.jpg")
+  image2_path = os.path.join(image_temp_dir, "image2.jpg")
+  download_image_from_url(image1, image1_path)
+  download_image_from_url(image2, image2_path)
+    
+  recog = DeepFace.verify(img1_path=image1_path, img2_path=image2_path, model_name=model)
+  
+  print(recog)
+  
+  # Menghapus file gambar sementara
+  os.remove(image1_path)
+  os.remove(image2_path)
+  os.rmdir(image_temp_dir)
+  
+  return recog['verified']

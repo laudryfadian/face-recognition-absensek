@@ -2,6 +2,7 @@ from flask import request
 from app.models.user_model import User
 from app.models.category_model import Category
 from app.models.absen_model import Absen
+from app.models.company_model import Company
 from app.controllers.face_recognition import *
 from app.utils import *
 
@@ -16,6 +17,8 @@ def absen_check(user_id):
   
   dt = datetime.datetime.now()
   dateNow = dt.strftime('%Y-%m-%d') #YYYY-MM-DD
+  print(dt)
+  print(dateNow)
   timeNow = dt.strftime('%H%M') #HH:MM
   
   toleransiAwalAbsen = 100 #1 jam
@@ -27,9 +30,9 @@ def absen_check(user_id):
       if len(absenNow) == 1:
         return success_response({'message': 'Kamu sudah absen hari ini'})
       
-      absenTime = int(timeNow) - toleransiAwalAbsen #batas awal absen
-      userTime = int(category['jam1']) #jam absen user
-      absenTimeWithToleransi = userTime + toleransiKeterlambatan #batas akhir absen user
+      absenTime = int(timeNow)  #batas awal absen
+      userTime = int(category['jam1']) - toleransiAwalAbsen #jam absen user
+      absenTimeWithToleransi = int(category['jam1']) + toleransiKeterlambatan #batas akhir absen user
       
       if absenTime < userTime:
         return success_response({'message': 'Belum saatnya absen', 'route': "/"})
@@ -46,9 +49,9 @@ def absen_check(user_id):
         return success_response({'message': 'Kamu sudah absen hari ini'})
       
       if len(absenNow) == 0:
-        absenTime = int(timeNow) - toleransiAwalAbsen #batas awal absen
-        userTime = int(category['jam1']) #jam absen user
-        absenTimeWithToleransi = userTime + toleransiKeterlambatan #batas akhir absen user
+        absenTime = int(timeNow)  #batas awal absen
+        userTime = int(category['jam1']) - toleransiAwalAbsen #jam absen user
+        absenTimeWithToleransi = int(category['jam1']) + toleransiKeterlambatan #batas akhir absen user
         
         if absenTime < userTime:
           return success_response({'message': 'Belum saatnya absen', 'route': "/"})
@@ -60,9 +63,9 @@ def absen_check(user_id):
           return success_response({'message': 'Telat absen', 'route': "/"})
         
       if len(absenNow) == 1:
-        absenTime = int(timeNow) - toleransiAwalAbsen #batas awal absen
-        userTime = int(category['jam2']) #jam absen user
-        absenTimeWithToleransi = userTime + toleransiKeterlambatan #batas akhir absen user
+        absenTime = int(timeNow)  #batas awal absen
+        userTime = int(category['jam2']) - toleransiAwalAbsen #jam absen user
+        absenTimeWithToleransi = int(category['jam2']) + toleransiKeterlambatan #batas akhir absen user
         
         if absenTime < userTime:
           return success_response({'message': 'Belum saatnya absen', 'route': "/"})
@@ -73,43 +76,42 @@ def absen_check(user_id):
         else:
           return success_response({'message': 'Telat absen', 'route': "/"})
         
-    case 3:
+    case 3: #SUDAH BENAR
       absenNow = Absen.get_by_id_user_n_datenow(user['id'], dateNow)
       if len(absenNow) == 3:
         return success_response({'message': 'Kamu sudah absen hari ini'})
-      
       if len(absenNow) == 0:
-        absenTime = int(timeNow) - toleransiAwalAbsen #batas awal absen
-        userTime = int(category['jam1']) #jam absen user
-        absenTimeWithToleransi = userTime + toleransiKeterlambatan #batas akhir absen user
+        absenTime = int(timeNow) #batas awal absen
+        userTime = int(category['jam1']) - toleransiAwalAbsen #jam absen user
+        absenTimeWithToleransi = int(category['jam1']) + toleransiKeterlambatan #batas akhir absen user
         
         if absenTime < userTime:
           return success_response({'message': 'Belum saatnya absen', 'route': "/"})
 
         elif absenTime >= userTime and absenTime <= absenTimeWithToleransi:
-          return success_response({'message': 'Sudah saatnya absen', 'route': "/absenJam1"})
+          return success_response({'message': 'Sudah saatnya absen', 'route': "/jam1"})
 
         else:
           return success_response({'message': 'Telat absen', 'route': "/"})
         
       if len(absenNow) == 1:
-        absenTime = int(timeNow) - toleransiAwalAbsen #batas awal absen
-        userTime = int(category['jam2']) #jam absen user
-        absenTimeWithToleransi = userTime + toleransiKeterlambatan #batas akhir absen user
+        absenTime = int(timeNow)  #batas awal absen
+        userTime = int(category['jam2']) - toleransiAwalAbsen #jam absen user
+        absenTimeWithToleransi = int(category['jam2']) + toleransiKeterlambatan #batas akhir absen user
         
         if absenTime < userTime:
           return success_response({'message': 'Belum saatnya absen', 'route': "/"})
 
         elif absenTime >= userTime and absenTime <= absenTimeWithToleransi:
-          return success_response({'message': 'Sudah saatnya absen', 'route': "/absenJam2"})
+          return success_response({'message': 'Sudah saatnya absen', 'route': "/jam2"})
 
         else:
           return success_response({'message': 'Telat absen', 'route': "/"})
       
       if len(absenNow) == 2:
-        absenTime = int(timeNow) - toleransiAwalAbsen #batas awal absen
-        userTime = int(category['jam3']) #jam absen user
-        absenTimeWithToleransi = userTime + toleransiKeterlambatan #batas akhir absen user
+        absenTime = int(timeNow)  #batas awal absen
+        userTime = int(category['jam3']) - toleransiAwalAbsen #jam absen user
+        absenTimeWithToleransi = int(category['jam3']) + toleransiKeterlambatan #batas akhir absen user
         
         if absenTime < userTime:
           return success_response({'message': 'Belum saatnya absen', 'route': "/"})
@@ -126,9 +128,9 @@ def absen_check(user_id):
         return success_response({'message': 'Kamu sudah absen hari ini'})
       
       if len(absenNow) == 0:
-        absenTime = int(timeNow) - toleransiAwalAbsen #batas awal absen
-        userTime = int(category['jam1']) #jam absen user
-        absenTimeWithToleransi = userTime + toleransiKeterlambatan #batas akhir absen user
+        absenTime = int(timeNow)  #batas awal absen
+        userTime = int(category['jam1']) - toleransiAwalAbsen #jam absen user
+        absenTimeWithToleransi = int(category['jam1']) + toleransiKeterlambatan #batas akhir absen user
         
         if absenTime < userTime:
           return success_response({'message': 'Belum saatnya absen', 'route': "/"})
@@ -140,9 +142,9 @@ def absen_check(user_id):
           return success_response({'message': 'Telat absen', 'route': "/"})
         
       if len(absenNow) == 1:
-        absenTime = int(timeNow) - toleransiAwalAbsen #batas awal absen
-        userTime = int(category['jam2']) #jam absen user
-        absenTimeWithToleransi = userTime + toleransiKeterlambatan #batas akhir absen user
+        absenTime = int(timeNow)  #batas awal absen
+        userTime = int(category['jam2']) - toleransiAwalAbsen #jam absen user
+        absenTimeWithToleransi = int(category['jam2']) + toleransiKeterlambatan #batas akhir absen user
         
         if absenTime < userTime:
           return success_response({'message': 'Belum saatnya absen', 'route': "/"})
@@ -154,9 +156,9 @@ def absen_check(user_id):
           return success_response({'message': 'Telat absen', 'route': "/"})
       
       if len(absenNow) == 2:
-        absenTime = int(timeNow) - toleransiAwalAbsen #batas awal absen
-        userTime = int(category['jam3']) #jam absen user
-        absenTimeWithToleransi = userTime + toleransiKeterlambatan #batas akhir absen user
+        absenTime = int(timeNow)  #batas awal absen
+        userTime = int(category['jam3']) - toleransiAwalAbsen #jam absen user
+        absenTimeWithToleransi = int(category['jam3']) + toleransiKeterlambatan #batas akhir absen user
         
         if absenTime < userTime:
           return success_response({'message': 'Belum saatnya absen', 'route': "/"})
@@ -168,9 +170,9 @@ def absen_check(user_id):
           return success_response({'message': 'Telat absen', 'route': "/"})
         
       if len(absenNow) == 3:
-        absenTime = int(timeNow) - toleransiAwalAbsen #batas awal absen
-        userTime = int(category['jam4']) #jam absen user
-        absenTimeWithToleransi = userTime + toleransiKeterlambatan #batas akhir absen user
+        absenTime = int(timeNow)  #batas awal absen
+        userTime = int(category['jam4']) - toleransiAwalAbsen #jam absen user
+        absenTimeWithToleransi = int(category['jam4']) + toleransiKeterlambatan #batas akhir absen user
         
         if absenTime < userTime:
           return success_response({'message': 'Belum saatnya absen', 'route': "/"})
@@ -184,25 +186,51 @@ def absen_check(user_id):
     case _:
       return error_response('Terjadi kesalahan, mohon hubungi admin')
 
-def absen_jam1():
+def absen(jam): #param jam = jam1/jam2/jam3/jam4
   idUser = request.json['idUser']
   idCompany = request.json['idCompany']
   image = request.json['image']
+  lat = request.json['lat']
+  long = request.json['long']
   
   dt = datetime.datetime.now()
   dateNow = dt.strftime('%Y-%m-%d')
+  timeNow = dt.strftime('%H%M') #HH:MM
   
-  cek = Absen.get_by_id_user_n_datenow_n_type(idUser, dateNow, "jam1")
-  if cek[0]:
-    return error_response("Kamu sudah absen!")
+  # cek = Absen.get_by_id_user_n_datenow_n_type(idUser, dateNow, jam)
+  # if cek[0]:
+  #   return error_response("Kamu sudah absen!")
   
   user = User.get_by_id(idUser)
   if not user:
     return error_response("user tidak ada")
   
-  faceRecog = face_recog_deepface(image1=user['image'], image2=image, model="VGG-Face") #user['image'] belum ada di model
+  faceRecog = face_recog_deepface(image1=user['image'], image2=image, model="Facenet512")
   if not faceRecog:
     return error_response("Face Recognition gagal, harap coba lagi")
   
-  absen = Absen.create(idUser=idUser, image=image, approve="Aproved", date=dateNow, idCompany=idCompany, status="Absen Masuk", type="Jam1")
+  absen = Absen.create(idUser=idUser, image=image, approve="Aproved", date=dateNow, idCompany=idCompany, status="Absen Masuk", type=jam, lat=lat, long=long, time=timeNow)
+  
+  return success_response(absen)
+
+def get_absen_by_id_user(user_id):
+  absens = Absen.get_by_id_user(user_id)
+  if absens:
+    return success_response(absens)
+  else:
+    return error_response("gagal lihat history")
+  
+def get_user_absen_today(company_id):
+  dt = datetime.datetime.now()
+  dateNow = dt.strftime('%Y-%m-%d')
+  
+  absen = Absen.get_by_id_company_n_date(company_id, dateNow)
+  if absen:
+    for i in range(len(absen)):
+      user = User.get_by_id(absen[i]['idUser'])
+      if not user:
+        return error_response("user tidak ada")
+
+      absen[i]['idUser'] = {'id': str(user['id']), 'name': user['name']}
+      
   return success_response(absen)

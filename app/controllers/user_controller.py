@@ -1,6 +1,7 @@
 from flask import request
 from app.models.user_model import User
 from app.models.company_model import Company
+from app.models.category_model import Category
 from app.utils import *
 
 def get_users():
@@ -23,12 +24,15 @@ def create_user():
     isAbsen = request.json['isAbsen']
     jobType = request.json['jobType']
     idCompany = request.json['idCompany']
+    image = request.json['image']
+    verify = request.json['verify']
+    idCategory = request.json['idCategory']
     
     emailCek = User.get_by_email(email)
     if emailCek:
         return error_response("email sudah ada")
     
-    user = User.create(name, email, password, phone, job, superUser, salary, jobType, idCompany, isAbsen)
+    user = User.create(name, email, password, phone, job, superUser, salary, jobType, image, verify, idCompany, isAbsen, idCategory)
     if not user:
         return error_response("gagal membuat akun")
     
@@ -52,8 +56,9 @@ def update_user(user_id):
     isAbsen = request.json['isAbsen']
     jobType = request.json['jobType']
     idCompany = request.json['idCompany']
+    image = request.json['image']
     
-    user = User.update(user_id=user_id, name=name, email=email, idCompany=idCompany, isAbsen=isAbsen, job=job, jobType=jobType, password=password, phone=phone, salary=salary, superUser=superUser)
+    user = User.update(user_id=user_id, name=name, email=email, idCompany=idCompany, isAbsen=isAbsen, job=job, jobType=jobType, password=password, phone=phone, salary=salary, superUser=superUser, image=image)
     if user:
         return success_response(user)
     else:
@@ -79,3 +84,25 @@ def get_user_by_id_company(company_id):
             company = Company.get_by_id(user[i]['idCompany'])
             user[i]['idCompany'] = company
     return success_response(user)
+
+def login_mobile():
+    email = request.json['email']
+    password = request.json['password']
+    
+    emailCek = User.get_by_email(email)
+    if not emailCek:
+        return error_response("Email salah")
+    
+    if emailCek['password'] != password:
+        return error_response("Password salah")
+    
+    if not emailCek['verify']:
+        return error_response("Kamu belum bisa login, tunggu beberapa saat lagi")
+    
+    category = Category.get_by_id(emailCek['idCategory'])
+    company = Company.get_by_id(emailCek['idCompany'])
+    emailCek['category'] = category['name']
+    emailCek['company'] = company['name']
+    
+    return success_response(emailCek)
+    

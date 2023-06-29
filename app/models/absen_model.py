@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from bson import ObjectId
 from app.database import db
 
@@ -8,8 +8,11 @@ class Absen(db.Document):
   status = db.StringField(required=True) #Datang/Pulang/DLL
   type = db.StringField(required=True) #jam1/jam2/jam3/jam4
   date = db.StringField(required=True) #2023-06-27
+  time = db.StringField(required=True) #0800
   image = db.StringField(required=True)
   approve = db.BooleanField(required=True)
+  lat = db.StringField(required=True)
+  long = db.StringField(required=True)
   created_at = db.DateTimeField(default=datetime.now)
   
   def to_dict(self):
@@ -20,8 +23,11 @@ class Absen(db.Document):
       'status': self.status,
       'type': self.type,
       'date': self.date,
+      'time': self.time,
       'image': self.image,
-      'approve': self.approve
+      'approve': self.approve,
+      'lat': self.lat,
+      'long': self.long
     }
     
   @staticmethod
@@ -30,13 +36,13 @@ class Absen(db.Document):
     return [absen.to_dict() for absen in absens]
     
   @staticmethod
-  def create(idUser, idCompany, status, type, date, image, approve):
-      absen = Absen(idUser=idUser, idCompany=idCompany, status=status, type=type, date=date, image=image, approve=approve)
+  def create(idUser, idCompany, status, type, date, image, approve, lat, long, time):
+      absen = Absen(idUser=idUser, idCompany=idCompany, status=status, type=type, date=date, image=image, approve=approve, lat=lat, long=long, time=time)
       absen.save()
       return absen.to_dict()
     
   @staticmethod
-  def update(absen_id, idUser=None, idCompany=None, status=None, type=None, date=None, image=None, approve=None):
+  def update(absen_id, idUser=None, idCompany=None, status=None, type=None, date=None, image=None, approve=None, lat=None, long=None, time=None):
       absen = Absen.objects(id=absen_id).first()
       if not absen:
         return None
@@ -54,6 +60,12 @@ class Absen(db.Document):
         absen.image = image
       if approve:
         absen.approve = approve
+      if lat:
+        absen.lat = lat
+      if long:
+        absen.long = long
+      if time:
+        absen.time = time
       absen.save()
       return absen.to_dict()
     
@@ -79,6 +91,13 @@ class Absen(db.Document):
           return [absen.to_dict() for absen in absens]
       except Absen.DoesNotExist:
           return None
+  
+  def get_by_id_company_n_date(idCompany, date):
+      try:
+          absens = Absen.objects.filter(idCompany=ObjectId(idCompany), date=date)
+          return [absen.to_dict() for absen in absens]
+      except Absen.DoesNotExist:
+          return None
         
   def get_by_id_user(idUser):
       try:
@@ -89,14 +108,14 @@ class Absen(db.Document):
         
   def get_by_id_user_n_datenow(idUser, now):
       try:
-          absens = Absen.objects.filter(idUser=ObjectId(idUser), datenow=now)
+          absens = Absen.objects.filter(idUser=ObjectId(idUser), date=now)
           return [absen.to_dict() for absen in absens]
       except Absen.DoesNotExist:
           return None
         
   def get_by_id_user_n_datenow_n_type(idUser, now, type):
       try:
-          absens = Absen.objects.filter(idUser=ObjectId(idUser), datenow=now, type=type)
+          absens = Absen.objects.filter(idUser=ObjectId(idUser), date=now, type=type)
           return [absen.to_dict() for absen in absens]
       except Absen.DoesNotExist:
           return None
