@@ -2,21 +2,15 @@ from datetime import datetime
 from app.database import db
 
 class Config(db.Document):
-    versi1 = db.StringField(required=True)
-    versi2 = db.StringField(required=True)
-    versi3 = db.StringField(required=True)
     faceRecogModel = db.StringField(required=True)
-    maintenance = db.BooleanField(required=True)
+    distanceMetric = db.StringField(required=True)
     created_at = db.DateTimeField(default=datetime.now)
     
     def to_dict(self):
         return {
             'id': str(self.id),
-            'versi1': self.versi1,
-            'versi2': self.versi2,
-            'versi3': self.versi3,
             'faceRecogModel': self.faceRecogModel,
-            'maintenance': self.maintenance
+            'distanceMetric': self.distanceMetric
         }
     
     @staticmethod
@@ -26,5 +20,16 @@ class Config(db.Document):
             return company.to_dict()
         except Config.DoesNotExist:
             return None
-        
+    
+    @staticmethod
+    def update(config_id, faceRecogModel, distanceMetric):
+        config = Config.objects(id=config_id).first()
+        if not config:
+          return None
+        if faceRecogModel:
+          config.faceRecogModel = faceRecogModel
+        if distanceMetric:
+          config.distanceMetric = distanceMetric
+        config.save()
+        return config.to_dict()        
     

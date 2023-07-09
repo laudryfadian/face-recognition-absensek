@@ -71,6 +71,8 @@ class User(db.Document):
             user.jobType = jobType
         if image:
             user.image = image
+        if isAbsen:
+            user.isAbsen = isAbsen
         if verify:
             user.verify = verify
         if idCompany:

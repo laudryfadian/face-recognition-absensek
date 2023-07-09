@@ -220,6 +220,13 @@ def get_absen_by_id_user(user_id):
   else:
     return error_response("gagal lihat history")
   
+def get_absen_by_id_user_n_date(user_id):
+  dt = datetime.datetime.now()
+  dateNow = dt.strftime('%Y-%m-%d')
+  
+  absens = Absen.get_by_id_user_n_datenow(user_id, dateNow)
+  return success_response(absens)
+  
 def get_user_absen_today(company_id):
   dt = datetime.datetime.now()
   dateNow = dt.strftime('%Y-%m-%d')
@@ -234,3 +241,25 @@ def get_user_absen_today(company_id):
       absen[i]['idUser'] = {'id': str(user['id']), 'name': user['name']}
       
   return success_response(absen)
+
+def get_absen_by_date(date):
+  absens = Absen.get_by_datenow(datenow=date)
+  if absens:
+    for i in range(len(absens)):
+      user = User.get_by_id(absens[i]['idUser'])
+      company = Company.get_by_id(absens[i]['idCompany'])
+      absens[i]['idUser'] = user
+      absens[i]['idCompany'] = company
+  
+  return success_response(absens)
+
+def get_absen_by_date_n_company(company_id, date):
+  absens = Absen.get_by_datenow_n_company(company=company_id,datenow=date)
+  if absens:
+    for i in range(len(absens)):
+      user = User.get_by_id(absens[i]['idUser'])
+      company = Company.get_by_id(absens[i]['idCompany'])
+      absens[i]['idUser'] = user
+      absens[i]['idCompany'] = company
+  
+  return success_response(absens)

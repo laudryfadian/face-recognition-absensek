@@ -96,9 +96,6 @@ def login_mobile():
     if emailCek['password'] != password:
         return error_response("Password salah")
     
-    if not emailCek['verify']:
-        return error_response("Kamu belum bisa login, tunggu beberapa saat lagi")
-    
     category = Category.get_by_id(emailCek['idCategory'])
     company = Company.get_by_id(emailCek['idCompany'])
     emailCek['category'] = category['name']

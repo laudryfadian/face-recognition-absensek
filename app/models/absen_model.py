@@ -119,5 +119,21 @@ class Absen(db.Document):
           return [absen.to_dict() for absen in absens]
       except Absen.DoesNotExist:
           return None
+        
+  @staticmethod
+  def get_by_datenow(datenow):
+      try:
+          absens = Absen.objects.filter(date=datenow)
+          return [absen.to_dict() for absen in absens]
+      except Absen.DoesNotExist:
+          return None
+  
+  @staticmethod
+  def get_by_datenow_n_company(company, datenow):
+      try:
+          absens = Absen.objects.filter(idCompany=company ,date=datenow)
+          return [absen.to_dict() for absen in absens]
+      except Absen.DoesNotExist:
+          return None
       
   
