@@ -28,4 +28,4 @@ def face_recog_deepface(image1, image2, model):
   os.remove(image2_path)
   os.rmdir(image_temp_dir)
   
-  return recog['verified']
+  return recog

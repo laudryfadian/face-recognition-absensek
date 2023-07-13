@@ -14,17 +14,17 @@ def get_users():
     return success_response(users)
 
 def create_user():
-    name = request.json['name']
-    email = request.json['email']
-    password = request.json['password']
-    phone = request.json['phone']
-    job = request.json['job']
+    name = request.json['name'] #
+    email = request.json['email'] #
+    password = request.json['password'] #
+    phone = request.json['phone'] #
+    job = request.json['job'] #
     superUser = request.json['superUser']
-    salary = request.json['salary']
-    isAbsen = request.json['isAbsen']
-    jobType = request.json['jobType']
-    idCompany = request.json['idCompany']
-    image = request.json['image']
+    salary = request.json['salary'] #
+    isAbsen = request.json['isAbsen'] 
+    jobType = request.json['jobType'] 
+    idCompany = request.json['idCompany'] 
+    image = request.json['image'] #
     verify = request.json['verify']
     idCategory = request.json['idCategory']
     

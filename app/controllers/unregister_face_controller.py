@@ -86,4 +86,15 @@ def approve_face(unreg_id):
         return error_response("Gagal menghapus")
     
     return success_response(update)
+
+def not_approve_face(unreg_id):
+    unreg = Unregister.get_by_id(unreg_id)
+    if not unreg:
+        return error_response("Data tidak ada")
+    
+    delete = Unregister.delete_by_id(unreg_id=unreg['id'])
+    if not delete:
+        return error_response("Gagal menghapus")
+    
+    return success_response(delete)
     

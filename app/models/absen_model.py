@@ -13,6 +13,7 @@ class Absen(db.Document):
   approve = db.BooleanField(required=True)
   lat = db.StringField(required=True)
   long = db.StringField(required=True)
+  deepface = db.DynamicField()
   created_at = db.DateTimeField(default=datetime.now)
   
   def to_dict(self):
@@ -36,8 +37,8 @@ class Absen(db.Document):
     return [absen.to_dict() for absen in absens]
     
   @staticmethod
-  def create(idUser, idCompany, status, type, date, image, approve, lat, long, time):
-      absen = Absen(idUser=idUser, idCompany=idCompany, status=status, type=type, date=date, image=image, approve=approve, lat=lat, long=long, time=time)
+  def create(idUser, idCompany, status, type, date, image, approve, lat, long, time, deepface):
+      absen = Absen(idUser=idUser, idCompany=idCompany, status=status, type=type, date=date, image=image, approve=approve, lat=lat, long=long, time=time, deepface=deepface)
       absen.save()
       return absen.to_dict()
     

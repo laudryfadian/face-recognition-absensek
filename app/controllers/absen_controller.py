@@ -205,11 +205,11 @@ def absen(jam): #param jam = jam1/jam2/jam3/jam4
   if not user:
     return error_response("user tidak ada")
   
-  faceRecog = face_recog_deepface(image1=user['image'], image2=image, model="Facenet512")
-  if not faceRecog:
+  faceRecog = face_recog_deepface(image1=user['image'], image2=image, model="ArcFace")
+  if not faceRecog['verified']:
     return error_response("Face Recognition gagal, harap coba lagi")
   
-  absen = Absen.create(idUser=idUser, image=image, approve="Aproved", date=dateNow, idCompany=idCompany, status="Absen Masuk", type=jam, lat=lat, long=long, time=timeNow)
+  absen = Absen.create(idUser=idUser, image=image, approve="Aproved", date=dateNow, idCompany=idCompany, status="Absen Masuk", type=jam, lat=lat, long=long, time=timeNow, deepface=faceRecog)
   
   return success_response(absen)
 
